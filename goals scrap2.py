@@ -9,7 +9,7 @@ import csv
 country = 'paraguay'
 tournament = 'clausura'
 year = '2022'
-rounds = 9
+rounds = 13
 total_rounds = 18
 games_per_round = 6
 
