@@ -5,7 +5,7 @@ from sklearn.linear_model import Ridge
 from sklearn.model_selection import cross_val_score
 
 
-def ridge_regression_v1(dataframe, jor, games_per_jor, lags):
+def ridge_regression_v1(dataframe, round, games_per_round, lags):
     """ Forecast the expected goals for every team using ridge regression.
 
         input: home, visitor and goal difference for every game
@@ -15,11 +15,16 @@ def ridge_regression_v1(dataframe, jor, games_per_jor, lags):
         :param jor: jornada to forecast expected goal difference
         :param games_per_jor: number of games per jornada
         """
+    # Check for lags parameter 
+    if lags >= round:
+        lags = round - 1
+        print(f"Lags Parameter is larger than expected, algorithm will adjust lags = {lags}")
+        
     # Drop data after jornada
-    df = dataframe.iloc[(jor - lags - 1) * games_per_jor:(jor - 1) * games_per_jor].copy()
+    df = dataframe.iloc[(round - lags - 1) * games_per_round:(round - 1) * games_per_round].copy()
 
     # Data Transformation
-    df['date'] = pd.to_datetime(df['date'].astype(str).str[:10], format='%d-%m-%Y')
+    df['date'] = pd.to_datetime(df['date'].astype(str).str[:5], format='%d-%m')
     df['goal_difference'] = df['goals_h'] - df['goals_v']
 
     # Create new variables to show home team win or loss result
@@ -49,5 +54,5 @@ def ridge_regression_v1(dataframe, jor, games_per_jor, lags):
     return df_ratings
 
 
-df = pd.read_csv('db/paraguay/2022/clausura/goals.csv', sep=";")
-print(ridge_regression_v1(df, 10, 6, 9))
+df = pd.read_csv('db/paraguay/2022/clausura/goals.csv', sep=",")
+print(ridge_regression_v1(df, 13, 6, 11))
